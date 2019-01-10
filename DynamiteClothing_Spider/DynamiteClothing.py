@@ -13,8 +13,7 @@ from scrapy.exceptions import DropItem
 class DynamiteclothingSpider(CrawlSpider):
     name = 'DynamiteClothing'
     allowed_domains = ['www.dynamiteclothing.com']
-    start_urls = [
-        'https://www.dynamiteclothing.com/us/profile/login.jsp?h=true']
+    start_urls = ['https://www.dynamiteclothing.com/us/profile/login.jsp?h=true']
 
     ids_seen = set()
     homepage_urls_css = ['.subcategory.subCatLink', '#catPageNext']
@@ -30,11 +29,12 @@ class DynamiteclothingSpider(CrawlSpider):
             formid='loginForm',
             formdata={
                 'loginEmail': 'zain@gmail.com',
-                '/atg/userprofiling/ProfileFormHandler.value.password': 'ABc123'},
-            callback=self.parse_check_login
+                '/atg/userprofiling/ProfileFormHandler.value.password': 'ABc123'
+            },
+            callback=self.check_login
         )
 
-    def parse_check_login(self, response):
+    def check_login(self, response):
         if response.css('[href*="profile.jsp"]::attr(href)').extract_first():
             yield response.follow('us?li=true', callback=self.parse)
         else:
@@ -73,10 +73,7 @@ class DynamiteclothingSpider(CrawlSpider):
         details_with_problems = response.css(
             '#descTabDetailsContent li::text, #descTab0Content li::text, #descTabDescriptionContent li::text'
         ).extract()
-        return [
-            each_detail.replace('\u00a0', ' ').strip()
-            for each_detail in details_with_problems
-        ]
+        return [each_detail.replace('\u00a0', ' ').strip() for each_detail in details_with_problems]
 
     def parse_product_img_urls(self, response):
         return response.css('a::attr(data-zoom)').extract()
