@@ -11,7 +11,7 @@ db = SQLAlchemy(app)
 def display_posts():
     from models import Post
     posts = Post.query.all()
-    return render_template('show_all.html', posts=posts)
+    return render_template('show_posts.html', posts=posts)
 
 
 if __name__ == '__main__':

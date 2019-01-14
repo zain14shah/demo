@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from hello_flask import db
+from run_server import db
 from models import Post
 
 
@@ -29,10 +29,10 @@ def add_posts():
     db.session.commit()
 
 
-def setUp():
+def set_up():
     db.create_all()
     add_posts()
 
 
 if __name__ == '__main__':
-    setUp()
+    set_up()
