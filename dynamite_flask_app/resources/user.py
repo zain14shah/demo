@@ -10,8 +10,7 @@ from flask_restful import Resource
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
-from init_db import db, jwt
-import models
+from init import db, jwt
 from models import ActiveToken
 
 
@@ -49,7 +48,6 @@ def check_if_token_in_blacklist(decrypted_token):
         opposite of this functionality.
 
     """
-    print(decrypted_token)
     jti = decrypted_token['jti']
     if decrypted_token['type'] == 'refresh':
         is_active_login = ActiveToken.query.filter_by(refresh_jti=jti).first()
@@ -82,7 +80,21 @@ class User(Resource):
     """Resource for creating a user, also called signup."""
 
     def post(self):
-        """
+        """This method creates a new user and authenticates the user session, also called register/signup.
+
+        Args:
+            name(str) = Name of the user.
+            email(str): A unique user email address, which does not already exist in the database.
+            password(str): A password for authentication, this is encrypted before being saved in the database.
+            address(str) = User's address.
+            contact_no(int) = User's contact number.
+
+        Returns:
+            message(str): Error, if email already exists.
+            message(str): Notifying the user that he/she has signed up successfully,
+            access_token(str): Used to access all methods that require JWT authentication,
+            refresh_token(str): Used to create a new access_token, when it expires, if all credentials are accepted.
+
         """
         name = request.form.get('name')
         email = request.form.get('email')
@@ -113,7 +125,7 @@ class Session(Resource):
 
         Args:
             email(str): A unique, already registered, user email address.
-            password(str): A password for authentication, this is encrypted before being saved in the database.
+            password(str): A password for authentication, this is matched againt the password in the database.
 
         Returns:
             message(str): Error, if email does not exist in the database.

@@ -5,7 +5,7 @@ from flask_restful import Resource
 from flask_jwt_extended import jwt_required
 
 from models import Product, Size
-from schemas import product_schema, products_schema
+from schemas import ProductSchema
 
 
 class Products(Resource):
@@ -38,11 +38,13 @@ class Products(Resource):
 
         products = query.paginate(page=int(page), per_page=10)
 
+        products_schema = ProductSchema(many=True)
+
         return products_schema.jsonify(products.items)
 
 
 class ProductById(Resource):
-    """Search product by given ID."""
+    """Get product by given ID."""
     @jwt_required
     def get(self, product_id):
         """Can only be accessed by an authenticated user. Provides the details for the given product's ID.
@@ -57,5 +59,7 @@ class ProductById(Resource):
 
         if not product:
             return {'Error': 'This product does not exist'}
+
+        product_schema = ProductSchema()
 
         return product_schema.jsonify(product)

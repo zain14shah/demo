@@ -2,10 +2,9 @@
 
 import datetime
 
-from init_db import db
+from init import db
 
 
-"""The relationship table between product and order tables."""
 product_order = db.Table('product_order',
          db.Column('product_id', db.Integer, db.ForeignKey(
              'product._id'), primary_key=True),
@@ -13,7 +12,6 @@ product_order = db.Table('product_order',
              'order._id'), primary_key=True)
          )
 
-"""The relationship table between product and feature tables."""
 product_feature = db.Table('product_feature',
          db.Column('product_id', db.Integer, db.ForeignKey(
              'product._id'), primary_key=True),
@@ -21,7 +19,6 @@ product_feature = db.Table('product_feature',
              'feature._id'), primary_key=True)
          )
 
-"""The relationship table between product and category tables."""
 product_category = db.Table('product_category',
          db.Column('product_id', db.Integer, db.ForeignKey(
              'product._id'), primary_key=True),

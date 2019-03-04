@@ -2,7 +2,7 @@
 This module gives us endpoints to access our APIs.
 """
 
-from init_db import api, app
+from init import api, app
 from resources.product import Products, ProductById
 from resources.user import User, Session
 

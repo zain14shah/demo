@@ -1,13 +1,10 @@
 """This module creates the schemas required to parse database tables to resources."""
 
-from models import Product, Size, User
-from init_db import ma
+from models import Product
+from init import marshal
 
 
-class ProductSchema(ma.ModelSchema):
+class ProductSchema(marshal.ModelSchema):
 
     class Meta:
         model = Product
-
-product_schema = ProductSchema()
-products_schema = ProductSchema(many=True)

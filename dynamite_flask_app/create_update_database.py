@@ -3,7 +3,7 @@
 import json
 import random
 
-from init_db import db
+from init import db
 from models import User, Product, Order, ImageUrl, Feature, ProductSize, Size, Category, Feature, ActiveToken
 from resources.user import add_new_user
 
@@ -11,53 +11,6 @@ from resources.user import add_new_user
 with open('products.json') as file:
     """Load the products.json file into the products variable."""
     products = json.load(file)
-
-users = [
-    {
-        'name': 'Zain',
-        'email': 'abc@123.com',
-        'password': 'asd123',
-        'address': 'abc',
-        'contact_no': 123,
-    },
-    {
-        'name': 'Ali',
-        'email': 'abc1@123.com',
-        'password': 'asd123',
-        'address': 'ab2c',
-        'contact_no': 1523,
-    },
-    {
-        'name': 'Shah',
-        'email': 'abcfff1@123.com',
-        'password': 'asd123',
-        'address': 'ab2cs',
-        'contact_no': 12345523,
-    },
-    {
-        'name': 'Ahmed',
-        'email': 'abhhewc1@123.com',
-        'password': 'asd123',
-        'address': 'ab2erc',
-        'contact_no': 176474523,
-    },
-    {
-        'name': 'Boy',
-        'email': 'furrfurr@123.com',
-        'password': 'asd123',
-        'address': 'fwefeew',
-        'contact_no': 8484876,
-    }
-]
-
-orders = [
-    {
-        'date': '2008, 4, 12'
-    },
-    {
-        'date': '2018, 12, 02'
-    }
-]
 
 
 def add_products():
@@ -82,8 +35,8 @@ def add_image_url(product, product_details):
     """Adds image urls to the database.
 
     Args:
-        Product(str): Each product, used from the add_products() method.
-        product_details: Add product to the database, also used to create relationship with the Product table.
+        product(obj): parsed json of a product.
+        product_details: product object from the database.
 
     """
     for image_url in product['img_urls']:
@@ -92,11 +45,9 @@ def add_image_url(product, product_details):
 
 
 def add_feature(product, product_details):
-    """adds features to the database.
-
-    Args:
-        Product(str): Each product, used from the add_products() method.
-        product_details: Add product to the database, also used to create relationship with the Product table.
+    """Args:
+        product(obj): parsed json of a product.
+        product_details: product object from the database.
 
     """
     for detail in product['details']:
@@ -110,28 +61,28 @@ def add_size(product, product_details):
     """adds sizes to the database.
 
     Args:
-        Product(str): Each product, used from the add_products() method.
-        product_details: Add product to the database, also used to create relationship with the Product table.
+        product(obj): parsed json of a product.
+        product_details: product object from the database.
 
     """
     for each_size in product['sizes']:
         each_size = each_size.upper()
-        available = ProductSize(availability=bool(random.getrandbits(1)))
+        set_availability = ProductSize(availability=bool(random.getrandbits(1)))
 
         size = Size.query.filter_by(size=each_size).first()
 
         if size is None:
             size = Size(size=each_size)
 
-        available.size = size
-        available.product = product_details
+        set_availability.size = size
+        set_availability.product = product_details
 
 
 def add_category(product_details):
     """adds categories to the database.
 
     Args:
-        product_details: Add product to the database, also used to create relationship with the Product table.
+        product_details: product object from the database.
 
     """
     category = Category.query.filter_by(type='General').first()
@@ -141,27 +92,22 @@ def add_category(product_details):
 
 
 def add_user():
-    """adds users to the database."""
-    for user in users:
-        add_new_user(user['name'], user['email'],
-                     user['password'], user['address'], user['contact_no'])
-
-    db.session.commit()
+    """creates user table in the database."""
 
 
-def add_order(user, product):
+def add_order(user_id, product_id):
     """adds orders to the database.
 
     Args:
-        user(int): The user ID.
-        product(int): The product ID
+        user_id(int): The user ID.
+        product_id(int): The product ID
 
     """
-    user_id = User.query.get(user)
-    product_id = Product.query.get(product)
+    user = User.query.get(user_id)
+    product = Product.query.get(product_id)
     order_details = Order()
-    user_id.orders.append(order_details)
-    product_id.orders.append(order_details)
+    user.orders.append(order_details)
+    product.orders.append(order_details)
 
     db.session.add(order_details)
     db.session.commit()
