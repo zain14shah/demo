@@ -11,7 +11,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 
 from init import db, jwt
-from models import ActiveToken
+from models import User, ActiveToken
 
 
 def generate_token(email):
@@ -68,7 +68,7 @@ def add_new_user(name, email, password, address, contact_no):
         contact_no(int): User's contact number.
     """
 
-    new_user = models.User(
+    new_user = User(
         name=name, email=email, password=generate_password_hash(password, method='sha256'), address=address,
         contact_no=contact_no
     )
@@ -76,7 +76,7 @@ def add_new_user(name, email, password, address, contact_no):
     db.session.add(new_user)
 
 
-class User(Resource):
+class NewUser(Resource):
     """Resource for creating a user, also called signup."""
 
     def post(self):
@@ -102,7 +102,7 @@ class User(Resource):
         address = request.form.get('address')
         contact_no = request.form.get('contact_no')
 
-        user = models.User.query.filter_by(email=email).first()
+        user = User.query.filter_by(email=email).first()
         if user:
             return {'Error': 'Email already exists'}
 
@@ -138,7 +138,7 @@ class Session(Resource):
         email = request.form.get('email')
         password = request.form.get('password')
 
-        user = models.User.query.filter_by(email=email).first()
+        user = User.query.filter_by(email=email).first()
         if not user:
             return {'Error': f'The email address \'{email}\' does not exist'}
 
